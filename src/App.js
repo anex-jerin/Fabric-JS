@@ -59,13 +59,15 @@ function App() {
   };
 
   const addText = ()=>{
-    const text = new fabric.Text('Add text here', {
+    const text = new fabric.IText('Add text here', {
       underline: false,
       overline: false,
       left: 200,
       top: 150,
     });
     fabricCanvas.add(text);
+    fabricCanvas.isDrawingMode = false;
+    setIsDrawingMode(false);
   }
   const changePenWidth = (width) => {
     if (fabricCanvas) {
