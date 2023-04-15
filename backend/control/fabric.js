@@ -5,9 +5,10 @@ const fabricSchema = require('../databaseSchema/schema.js');
 
 const addFabric = async (req, res) => {
   try {
-    console.log(req.body)  
-    // const fabric = await fabricSchema.create(req.body);
-    // res.json(fabric);
+    const data = req.body
+    console.log(data)
+    const fabric = await fabricSchema.create({data});
+    res.json(fabric);
   } catch (error) {
     res.json(error); 
   } 
@@ -15,7 +16,7 @@ const addFabric = async (req, res) => {
 const getFabric = async (req, res) => {
   try {
     console.log(req.body)
-    const fabric = await fabricSchema.find();
+    const fabric = await fabricSchema.find({});
     res.json(fabric);
   } catch (error) {
     res.json(error);

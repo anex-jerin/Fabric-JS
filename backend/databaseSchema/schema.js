@@ -3,10 +3,12 @@ const schema = mongoose.Schema
 
 const Fabric = new schema({
     date:{
-        default:Date
+        type:String,
+        default:Date,
+        require:true
     },
     data:{
-        type:String
+        type:Object
     }
 })
 
