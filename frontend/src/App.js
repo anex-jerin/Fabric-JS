@@ -2,6 +2,7 @@ import './App.css';
 import { useEffect, useState, useRef } from 'react';
 import { fabric } from 'fabric';
 import { Icon } from '@iconify/react';
+import axios from 'axios';
 
 function App() {
   const canRef = useRef(null);
@@ -23,6 +24,25 @@ function App() {
       canvas.dispose();
     };
   }, [canRef]);
+  const JSONfile = async () => {
+    const json = fabricCanvas.toDatalessJSON(['clipPath']);
+    const out = JSON.stringify(json, null, '\t');
+    return json;
+  };
+
+  const handleSubmit =  async () => {
+    const json = await JSONfile()
+    console.log(json)
+    axios
+      .post('http://localhost:3500/api/v1/create',json)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
 
   const addTriangle = () => {
     const triangle = new fabric.Triangle({
@@ -129,7 +149,7 @@ function App() {
     }
   };
 
-  const downloadButton = () => {
+  const downloadSVG = () => {
     const svg = fabricCanvas.toSVG();
     const downloadLink = document.createElement('a');
     const blob = new Blob([svg], { type: 'image/svg+xml' });
@@ -139,28 +159,7 @@ function App() {
     downloadLink.download = fileName;
     downloadLink.click();
   };
-
-  const downloadButton1 = async () => {
-    const json = fabricCanvas.toDatalessJSON(['clipPath']);
-    const out = JSON.stringify(json, null, '\t');
-    const blob = new Blob([out], { type: 'text/plain' });
-    const clipboardItemData = { [blob.type]: blob };
-    try {
-      navigator.clipboard &&
-        (await navigator.clipboard.write([
-          new ClipboardItem(clipboardItemData),
-        ]));
-    } catch (error) {
-      console.log(error);
-    }
-    const blobURL = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobURL;
-    a.download = 'eraser_example.json';
-    a.click();
-    URL.revokeObjectURL(blobURL);
-  };
-
+ 
   return (
     <div className='full'>
       <canvas ref={canRef} />
@@ -248,35 +247,34 @@ function App() {
           <button onClick={() => addRect()} title=' Add Square'>
             <Icon icon='material-symbols:square-outline-rounded' />
           </button>
-          <button onClick={() => addRect()} title='Add Image'>
-            <Icon icon='ic:round-crop-original' />
-          </button>
+
           <button onClick={() => addText()} title='Add text'>
             <Icon icon='ph:text-t-bold' />
           </button>
 
           <button
             className='ml'
-            onClick={(e) => drawingMode()}
+            onClick={() => drawingMode()}
             title='Select Object '
           >
             <Icon icon='mdi:cursor-move' />
           </button>
-          <button
-            onClick={(e) => removeObject()}
-            title='Remove selected object'
-          >
+          <button onClick={() => removeObject()} title='Remove selected object'>
             <Icon icon='material-symbols:delete-forever' />
           </button>
-          <button onClick={(e) => clearButton()} title='Clear All'>
+          <button onClick={() => clearButton()} title='Clear All'>
             <Icon icon='ant-design:clear-outlined' />
           </button>
 
-          <button className='ml' onClick={(e) => addCircle()} title='Upload'>
+          <button
+            className='ml'
+            onClick={(e) => handleSubmit(e)}
+            title='Upload'
+          >
             <Icon icon='material-symbols:cloud-upload' />
           </button>
-          <button onClick={(e) => downloadButton()} title='Download'>
-            <Icon icon='material-symbols:download' />
+          <button onClick={() => downloadSVG()} title='Download'>
+            <Icon icon='ph:file-svg' />
           </button>
         </div>
       </div>
