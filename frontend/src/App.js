@@ -26,7 +26,6 @@ function App() {
   }, [canRef]);
   const JSONfile = async () => {
     const json = fabricCanvas.toDatalessJSON(['clipPath']);
-    const out = JSON.stringify(json, null, '\t');
     return json;
   };
 
@@ -159,6 +158,15 @@ function App() {
     downloadLink.download = fileName;
     downloadLink.click();
   };
+  const downloadPNG = () => {
+    const png = fabricCanvas.toDataURL("png");
+    const downloadLink = document.createElement('a');
+    const fileName = 'save.svg';
+    downloadLink.href = png;
+    downloadLink.download = fileName;
+    downloadLink.click();
+  };
+ 
  
   return (
     <div className='full'>
@@ -275,6 +283,9 @@ function App() {
           </button>
           <button onClick={() => downloadSVG()} title='Download'>
             <Icon icon='ph:file-svg' />
+          </button>
+          <button onClick={() => downloadPNG()} title='Download'>
+            <Icon icon='ph:file-png' />
           </button>
         </div>
       </div>
